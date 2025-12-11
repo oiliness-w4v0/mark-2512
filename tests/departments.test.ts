@@ -3,6 +3,7 @@ import { db } from "@/db"
 import { departmentRelationships, departments } from "@/db/schema"
 import {
 	generateTestDepartments,
+	getSubDepartmentTreeByName,
 	getSubDepartmentsByName,
 } from "@/db/department.server"
 
@@ -126,6 +127,64 @@ describe("departments", () => {
 		const departmentNamesB = dpsB.map((dept) => dept.name)
 		expect(departmentNamesB).toContain("E")
 		expect(dpsB.length).toBe(1)
+	})
+
+	it("获取子部门树形结构", async () => {
+		const tree = await getSubDepartmentTreeByName("Sales")
+		console.log(JSON.stringify(tree, null, 2))
+		expect(tree).toBeDefined()
+		expect(tree.size).toBe(1)
+		const salesNode = Array.from(tree.values())[0]
+		expect(salesNode.name).toBe("Sales")
+		expect(salesNode.children.length).toBe(2) // A, B
+
+		const departmentANode = salesNode.children.find(
+			(child) => child.name === "A",
+		)!
+		expect(departmentANode).toBeDefined()
+		expect(departmentANode.children.length).toBe(2) // C, D
+
+		const departmentBNode = salesNode.children.find(
+			(child) => child.name === "B",
+		)!
+		expect(departmentBNode).toBeDefined()
+		expect(departmentBNode.children.length).toBe(2) // C, D
+
+		const departmentCNodeFromA = departmentANode.children.find(
+			(child) => child.name === "C",
+		)!
+		expect(departmentCNodeFromA).toBeDefined()
+		expect(departmentCNodeFromA.children.length).toBe(0)
+
+		const departmentDNodeFromA = departmentANode.children.find(
+			(child) => child.name === "D",
+		)!
+		expect(departmentDNodeFromA).toBeDefined()
+		expect(departmentDNodeFromA.children.length).toBe(1) // E
+
+		const departmentENode = departmentDNodeFromA.children.find(
+			(child) => child.name === "E",
+		)!
+		expect(departmentENode).toBeDefined()
+		expect(departmentENode.children.length).toBe(0)
+
+		const departmentCNodeFromB = departmentBNode.children.find(
+			(child) => child.name === "C",
+		)!
+		expect(departmentCNodeFromB).toBeDefined()
+		expect(departmentCNodeFromB.children.length).toBe(0)
+
+		const departmentDNodeFromB = departmentBNode.children.find(
+			(child) => child.name === "D",
+		)!
+		expect(departmentDNodeFromB).toBeDefined()
+		expect(departmentDNodeFromB.children.length).toBe(1) // E
+
+		const departmentENodeFromB = departmentDNodeFromB.children.find(
+			(child) => child.name === "E",
+		)!
+		expect(departmentENodeFromB).toBeDefined()
+		expect(departmentENodeFromB.children.length).toBe(0)
 	})
 
 	it("清理测试数据", async () => {
