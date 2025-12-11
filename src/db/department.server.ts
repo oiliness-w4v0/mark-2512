@@ -179,7 +179,7 @@ interface DepartmentNode extends DepartmentSelect {
 }
 
 // zh: 将平铺的部门列表转换为树形结构
-export function buildDepartmentTree(departmentsList: Array<DepartmentSelect>): Map<string, DepartmentNode> {
+export function buildDepartmentTree(departmentsList: Array<DepartmentSelect>): WeakMap<DepartmentSelect, DepartmentNode> {
 	// 找到最小的level作为根节点
 	const rootDepartment = departmentsList.reduce((prev, curr) => {
 		return prev.level < curr.level ? prev : curr
@@ -202,5 +202,7 @@ export function buildDepartmentTree(departmentsList: Array<DepartmentSelect>): M
 		}
 	})
 
-	return (new Map()).set(rootDepartment.id, departmentMap.get(rootDepartment.id)!)
+	return (new WeakMap()).set(rootDepartment, {
+		children: departmentMap.get(rootDepartment.id)?.children || [],
+	})
 }
