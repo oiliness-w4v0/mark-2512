@@ -40,15 +40,15 @@ export const departmentRelationships = pgTable(
 			.notNull()
 			.references(() => departments.id, { onDelete: "cascade" }),
 	},
-	(table) => ({
-		pk: primaryKey({
+	(table) => [
+		primaryKey({
 			columns: [table.departmentId, table.relatedDepartmentId],
 		}),
 		// 防止重复的相反关系（如果需要）
-		uniqueReverse: primaryKey({
+		primaryKey({
 			columns: [table.relatedDepartmentId, table.departmentId],
 		}),
-	}),
+	],
 )
 
 // 定义关系
@@ -56,6 +56,7 @@ export const departmentsRelations = relations(departments, ({ many }) => ({
 	relationships: many(departmentRelationships),
 }))
 
+// 定义关系
 export const departmentRelationshipsRelations = relations(
 	departmentRelationships,
 	({ one }) => ({
@@ -69,3 +70,27 @@ export const departmentRelationshipsRelations = relations(
 		}),
 	}),
 )
+
+// 人员表
+export const employees = pgTable("employees", {
+	id: uuid("id").defaultRandom().primaryKey(),
+	name: text("name").notNull(),
+	departmentId: uuid("department_id")
+		.notNull()
+		.references(() => departments.id, { onDelete: "set null" }),
+	position: text("position"), // 职位
+	identityCard: text("identity_card").notNull().unique(), // 身份证号
+	phone: text("phone"), // 电话号码
+	email: text("email").notNull(), // 邮箱
+	isActive: boolean("is_active").default(true), // 人员信息是否有效
+	createdAt: timestamp("created_at").defaultNow(),
+	updatedAt: timestamp("updated_at").defaultNow(),
+})
+
+// 定义关系
+export const employeesRelations = relations(employees, ({ one }) => ({
+	department: one(departments, {
+		fields: [employees.departmentId],
+		references: [departments.id],
+	}),
+}))
