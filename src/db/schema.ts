@@ -20,6 +20,9 @@ export const departments = pgTable("departments", {
 	id: uuid("id").defaultRandom().primaryKey(),
 	name: text("name").notNull(),
 	descrition: text("description"),
+	// 区分部门的级别，默认10，数字越小级别越高
+	// 目前暂定：0：超级管理员，1：管理员，2：公司级，3：一级部门，4：二级部门，依此类推
+	level: serial("level").$defaultFn(() => 10).notNull(),
 
 	isActive: boolean("is_active").default(true),
 	createdAt: timestamp("created_at").defaultNow(),
