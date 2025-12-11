@@ -1,12 +1,8 @@
-import { eq, gt, lt } from "drizzle-orm"
+import { eq, gt, gte, lt } from "drizzle-orm"
 import { departmentRelationships, departments } from "./schema"
-import type { InferSelectModel } from "drizzle-orm"
 import { db } from "@/db"
 
-type DepartmentSelect = InferSelectModel<typeof departments>
-
-// Function to generate a root department object
-// zh: 生成根部门
+// eg: 生成根部门
 export async function generateRootDepartment(name: string) {
 	const [rootDepartment] = await db
 		.insert(departments)
@@ -20,8 +16,7 @@ export async function generateRootDepartment(name: string) {
 	return rootDepartment
 }
 
-// Function to generate test department data
-// zh: 生成测试部门数据
+// eg: 生成测试部门数据
 export async function generateTestDepartments() {
 	const sales = await generateRootDepartment("Sales")
 
@@ -103,15 +98,13 @@ export async function generateTestDepartments() {
 	return [sales, departmentA, departmentB, departmentC, departmentD]
 }
 
-// Functions to retrieve department data
-// zh: 获取所有部门数据
+// eg: 获取所有部门数据
 export async function getAllDepartments() {
 	const allDepartments = await db.select().from(departments)
 	return allDepartments
 }
 
-// Function to retrieve a department by ID
-// zh: 根据ID获取部门数据
+// eg: 根据ID获取部门数据
 export async function getDepartmentById(departmentId: string) {
 	const department = await db
 		.select()
@@ -121,8 +114,7 @@ export async function getDepartmentById(departmentId: string) {
 	return department[0]
 }
 
-// Function to retrieve a department by name
-// zh: 根据名称获取部门数据
+// eg: 根据名称获取部门数据
 export async function getDepartmentByName(name: string) {
 	const department = await db
 		.select()
@@ -132,7 +124,7 @@ export async function getDepartmentByName(name: string) {
 	return department[0]
 }
 
-// zh: 根据ID获取所有自己级别以下的部门
+// eg: 根据ID获取所有自己级别以下的部门
 export async function getSubDepartments(departmentId: string) {
 	// First, get the level of the specified department
 	const department = await getDepartmentById(departmentId)
@@ -146,63 +138,20 @@ export async function getSubDepartments(departmentId: string) {
 	return subDepartments
 }
 
-// zh: 根据Name获取所有自己级别以下的部门
-export async function getSubDepartmentsByName(name: string) {
+// eg: 根据Name获取所有自己级别以下的部门
+export async function getSubDepartmentsByName(name: string, have?: boolean) {
 	// First, get the department by name
 	const department = await getDepartmentByName(name)
 
-	// Then, get all departments with a higher level number (lower rank)
-	const subDepartments = await db
-		.select()
-		.from(departments)
-		.where(gt(departments.level, department.level))
+	const subDepartments = have
+		? await db
+				.select()
+				.from(departments)
+				.where(gte(departments.level, department.level))
+		: await db
+				.select()
+				.from(departments)
+				.where(gt(departments.level, department.level))
 
 	return subDepartments
-}
-
-// zh: 根据ID获取所有自己级别一下的部门（树形结构）
-export async function getSubDepartmentTree(departmentId: string) {
-	const dps = await getSubDepartments(departmentId)
-	// 将平铺的部门列表转换为树形结构
-	return buildDepartmentTree(dps)
-}
-
-// zh: 根据Name获取所有自己级别一下的部门（树形结构）
-export async function getSubDepartmentTreeByName(name: string) {
-	const dps = await getSubDepartmentsByName(name)
-	// 将平铺的部门列表转换为树形结构
-	return buildDepartmentTree(dps)
-}
-
-interface DepartmentNode extends DepartmentSelect {
-	children: Array<DepartmentNode>
-}
-
-// zh: 将平铺的部门列表转换为树形结构
-export function buildDepartmentTree(departmentsList: Array<DepartmentSelect>): WeakMap<DepartmentSelect, DepartmentNode> {
-	// 找到最小的level作为根节点
-	const rootDepartment = departmentsList.reduce((prev, curr) => {
-		return prev.level < curr.level ? prev : curr
-	})
-
-	const departmentMap: Map<string, DepartmentNode> = new Map()
-
-	departmentsList.forEach(dept => {
-		departmentMap.set(dept.id, { ...dept, children: [] })
-	})
-
-	departmentsList.forEach(dept => {
-		if (dept.level > rootDepartment.level) {
-			// Example logic, assuming we have a way to find parent department
-			const parentDept = departmentsList.find(d => d.level === dept.level - 1)
-			if (parentDept) {
-				const parent = departmentMap.get(parentDept.id)
-				parent?.children.push(departmentMap.get(dept.id)!)
-			}
-		}
-	})
-
-	return (new WeakMap()).set(rootDepartment, {
-		children: departmentMap.get(rootDepartment.id)?.children || [],
-	})
 }
