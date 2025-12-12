@@ -1,112 +1,56 @@
-import { eq, gt, gte, lt } from "drizzle-orm"
+import { asc, eq, gt, gte, lt } from "drizzle-orm"
 import { departmentRelationships, departments } from "./schema"
 import { db } from "@/db"
 
-// eg: 生成根部门
-export async function generateRootDepartment(name: string) {
-	const [rootDepartment] = await db
+// 创建部门
+export async function createDepartment(
+	name: string,
+	descrition: string,
+	level: number,
+) {
+	const [newDepartment] = await db
 		.insert(departments)
 		.values({
 			name,
-			descrition: `${name} Department`,
-			level: 2,
+			descrition,
+			level,
 		})
 		.returning()
-
-	return rootDepartment
+	return newDepartment
 }
 
-// eg: 生成测试部门数据
-export async function generateTestDepartments() {
-	const sales = await generateRootDepartment("Sales")
-
-	const [departmentA] = await db
-		.insert(departments)
+// 创建关联
+export async function createDepartmentRelationship(
+	departmentId: string,
+	relatedDepartmentId: string,
+) {
+	const [newRelationship] = await db
+		.insert(departmentRelationships)
 		.values({
-			name: "A",
-			descrition: "Handles A",
-			level: 3,
+			departmentId,
+			relatedDepartmentId,
 		})
 		.returning()
-
-	const [departmentB] = await db
-		.insert(departments)
-		.values({
-			name: "B",
-			descrition: "Handles B",
-			level: 3,
-		})
-		.returning()
-
-	const [departmentC] = await db
-		.insert(departments)
-		.values({
-			name: "C",
-			descrition: "Handles C",
-			level: 4,
-		})
-		.returning()
-
-	const [departmentD] = await db
-		.insert(departments)
-		.values({
-			name: "D",
-			descrition: "Handles D",
-			level: 4,
-		})
-		.returning()
-
-	const [departmentE] = await db
-		.insert(departments)
-		.values({
-			name: "E",
-			descrition: "Handles E",
-			level: 5,
-		})
-		.returning()
-
-	// 建立部门关系 root -> A, root -> B, A -> C, A -> D, B -> C, B -> D
-	await db.insert(departmentRelationships).values({
-		departmentId: sales.id,
-		relatedDepartmentId: departmentA.id,
-	})
-	await db.insert(departmentRelationships).values({
-		departmentId: sales.id,
-		relatedDepartmentId: departmentB.id,
-	})
-	await db.insert(departmentRelationships).values({
-		departmentId: departmentA.id,
-		relatedDepartmentId: departmentC.id,
-	})
-	await db.insert(departmentRelationships).values({
-		departmentId: departmentA.id,
-		relatedDepartmentId: departmentD.id,
-	})
-	await db.insert(departmentRelationships).values({
-		departmentId: departmentB.id,
-		relatedDepartmentId: departmentC.id,
-	})
-	await db.insert(departmentRelationships).values({
-		departmentId: departmentB.id,
-		relatedDepartmentId: departmentD.id,
-	})
-	await db.insert(departmentRelationships).values({
-		departmentId: departmentD.id,
-		relatedDepartmentId: departmentE.id,
-	})
-
-	return [sales, departmentA, departmentB, departmentC, departmentD]
+	return newRelationship
 }
 
-// eg: 获取所有部门数据
+// 获取所有部门数据（按照级别升序排列）
 export async function getAllDepartments() {
-	const allDepartments = await db.select().from(departments)
+	const allDepartments = await db
+		.select()
+		.from(departments)
+		.orderBy(asc(departments.level))
 	return allDepartments
 }
 
-// eg: 获取所有部门数据（包含人员数据）
+export type DepartmentWithEmployees = NonNullable<
+	Awaited<ReturnType<typeof getActiveDepartments>>
+>
+
+// 获取所有部门数据（包含人员数据，按照级别升序排列）
 export async function getActiveDepartments() {
 	const activeDepartments = await db.query.departments.findMany({
+		orderBy: asc(departments.level),
 		with: {
 			employees: true,
 		},
@@ -114,7 +58,7 @@ export async function getActiveDepartments() {
 	return activeDepartments
 }
 
-// eg: 根据ID获取部门数据
+// 根据ID获取部门数据
 export async function getDepartmentById(departmentId: string) {
 	const department = await db
 		.select()
@@ -124,7 +68,7 @@ export async function getDepartmentById(departmentId: string) {
 	return department[0]
 }
 
-// eg: 根据名称获取部门数据
+// 根据名称获取部门数据
 export async function getDepartmentByName(name: string) {
 	const department = await db
 		.select()
@@ -134,7 +78,7 @@ export async function getDepartmentByName(name: string) {
 	return department[0]
 }
 
-// eg: 根据ID获取所有自己级别以下的部门
+// 根据ID获取所有自己级别以下的部门
 export async function getSubDepartments(departmentId: string) {
 	// First, get the level of the specified department
 	const department = await getDepartmentById(departmentId)
@@ -148,7 +92,7 @@ export async function getSubDepartments(departmentId: string) {
 	return subDepartments
 }
 
-// eg: 根据Name获取所有自己级别以下的部门
+// 根据Name获取所有自己级别以下的部门
 export async function getSubDepartmentsByName(name: string, have?: boolean) {
 	// First, get the department by name
 	const department = await getDepartmentByName(name)
@@ -164,4 +108,10 @@ export async function getSubDepartmentsByName(name: string, have?: boolean) {
 				.where(gt(departments.level, department.level))
 
 	return subDepartments
+}
+
+// 获取所有关联关系
+export async function getAllDepartmentRelationships() {
+	const relationships = await db.select().from(departmentRelationships)
+	return relationships
 }

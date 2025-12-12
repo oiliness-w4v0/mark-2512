@@ -8,7 +8,6 @@ export const Route = createFileRoute("/")({
 function App() {
 	return (
 		<div>
-			<div>Welcome to the Home Page</div>
 			<DepartmentUI />
 		</div>
 	)

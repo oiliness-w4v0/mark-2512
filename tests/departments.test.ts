@@ -1,18 +1,49 @@
 import { beforeAll, describe, expect, it } from "vitest"
-import { db } from "@/db"
-import { departmentRelationships, departments } from "@/db/schema"
 import {
-	generateTestDepartments,
+	createDepartment,
+	createDepartmentRelationship,
+	getAllDepartmentRelationships,
+	getAllDepartments,
 	getSubDepartmentsByName,
 } from "@/db/department.server"
+import { resetTables } from "@/db/common.server"
+
+// test: 生成根部门
+export function generateRootDepartment(name: string) {
+	return createDepartment(name, `${name} Department`, 2)
+}
+
+// test: 生成测试部门数据
+export async function generateTestDepartments() {
+	const sales = await generateRootDepartment("Sales")
+
+	const departmentA = await createDepartment("A", "Handles A", 3)
+	const departmentB = await createDepartment("B", "Handles B", 3)
+
+	const departmentC = await createDepartment("C", "Handles C", 4)
+	const departmentD = await createDepartment("D", "Handles D", 4)
+
+	const departmentE = await createDepartment("E", "Handles E", 5)
+
+	// 建立部门关系
+	await createDepartmentRelationship(sales.id, departmentA.id) // root -> A
+	await createDepartmentRelationship(sales.id, departmentB.id) // root -> B
+	await createDepartmentRelationship(departmentA.id, departmentC.id) // A -> C
+	await createDepartmentRelationship(departmentA.id, departmentD.id) // A -> D
+	await createDepartmentRelationship(departmentB.id, departmentC.id) // B -> C
+	await createDepartmentRelationship(departmentB.id, departmentD.id) // B -> D
+	await createDepartmentRelationship(departmentD.id, departmentE.id) // D -> E
+
+	return [sales, departmentA, departmentB, departmentC, departmentD]
+}
 
 describe("departments", () => {
 	beforeAll(async () => {
-		await db.delete(departments)
+		await resetTables()
 	})
 
 	it("departments 表清空", async () => {
-		const result = await db.select().from(departments)
+		const result = await getAllDepartments()
 		expect(result.length).toBe(0)
 	})
 
@@ -27,7 +58,7 @@ describe("departments", () => {
 	})
 
 	it("验证部门关系", async () => {
-		const allDepartments = await db.select().from(departments)
+		const allDepartments = await getAllDepartments()
 		const sales = allDepartments.find((dept) => dept.name === "Sales")
 		const departmentA = allDepartments.find((dept) => dept.name === "A")
 		const departmentB = allDepartments.find((dept) => dept.name === "B")
@@ -39,7 +70,7 @@ describe("departments", () => {
 		expect(departmentC).toBeDefined()
 		expect(departmentD).toBeDefined()
 
-		const relationships = await db.select().from(departmentRelationships)
+		const relationships = await getAllDepartmentRelationships()
 		const salesToA = relationships.find(
 			// root -> A
 			(rel) =>
@@ -85,7 +116,7 @@ describe("departments", () => {
 	})
 
 	it("验证部门级别", async () => {
-		const allDepartments = await db.select().from(departments)
+		const allDepartments = await getAllDepartments()
 		const sales = allDepartments.find((dept) => dept.name === "Sales")
 		const departmentA = allDepartments.find((dept) => dept.name === "A")
 		const departmentB = allDepartments.find((dept) => dept.name === "B")
@@ -126,11 +157,5 @@ describe("departments", () => {
 		const departmentNamesB = dpsB.map((dept) => dept.name)
 		expect(departmentNamesB).toContain("E")
 		expect(dpsB.length).toBe(1)
-	})
-
-	it("清理测试数据", async () => {
-		await db.delete(departments)
-		const result = await db.select().from(departments)
-		expect(result.length).toBe(0)
 	})
 })
