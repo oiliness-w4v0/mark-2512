@@ -54,6 +54,7 @@ export const departmentRelationships = pgTable(
 // 定义关系
 export const departmentsRelations = relations(departments, ({ many }) => ({
 	relationships: many(departmentRelationships),
+	employees: many(employees),
 }))
 
 // 定义关系

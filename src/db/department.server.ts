@@ -104,6 +104,16 @@ export async function getAllDepartments() {
 	return allDepartments
 }
 
+// eg: 获取所有部门数据（包含人员数据）
+export async function getActiveDepartments() {
+	const activeDepartments = await db.query.departments.findMany({
+		with: {
+			employees: true,
+		},
+	})
+	return activeDepartments
+}
+
 // eg: 根据ID获取部门数据
 export async function getDepartmentById(departmentId: string) {
 	const department = await db
