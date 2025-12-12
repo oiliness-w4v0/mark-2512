@@ -1,5 +1,6 @@
 import { asc, eq, gt, gte, lt } from "drizzle-orm"
 import { departmentRelationships, departments } from "./schema"
+import type { InferInsertModel, InferSelectModel } from "drizzle-orm"
 import { db } from "@/db"
 
 // 创建部门
@@ -114,4 +115,37 @@ export async function getSubDepartmentsByName(name: string, have?: boolean) {
 export async function getAllDepartmentRelationships() {
 	const relationships = await db.select().from(departmentRelationships)
 	return relationships
+}
+
+export type DepartmentRelationship = InferInsertModel<
+	typeof departmentRelationships
+>
+export type DepartmentRelationshipSelect = InferSelectModel<
+	typeof departmentRelationships
+>
+export type SetDepartmentRelationshipsParams = Array<{
+	fromDepartmentId: string
+	toDepartmentId: string
+}>
+
+// 设置关联关系
+export async function setDRelationships(
+	relationships: SetDepartmentRelationshipsParams,
+) {
+	const newRelationships = relationships.map((rel) => ({
+		departmentId: rel.fromDepartmentId,
+		relatedDepartmentId: rel.toDepartmentId,
+	}))
+	await db.insert(departmentRelationships).values(newRelationships)
+}
+
+// 删除关联关系
+export async function deleteDRelationships(
+	relationships: SetDepartmentRelationshipsParams,
+) {
+	for (const rel of relationships) {
+		await db
+			.delete(departmentRelationships)
+			.where(eq(departmentRelationships.departmentId, rel.fromDepartmentId))
+	}
 }
