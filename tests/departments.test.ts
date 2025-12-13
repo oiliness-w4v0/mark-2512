@@ -1,41 +1,12 @@
 import { beforeAll, describe, expect, it } from "vitest"
+import { generateTestDepartments } from './utils'
 import {
-	createDepartment,
-	createDepartmentRelationship,
 	getAllDepartmentRelationships,
 	getAllDepartments,
 	getSubDepartmentsByName,
 } from "@/db/department.server"
 import { resetTables } from "@/db/common.server"
 
-// test: 生成根部门
-export function generateRootDepartment(name: string) {
-	return createDepartment(name, `${name} Department`, 2)
-}
-
-// test: 生成测试部门数据
-export async function generateTestDepartments() {
-	const sales = await generateRootDepartment("Sales")
-
-	const departmentA = await createDepartment("A", "Handles A", 3)
-	const departmentB = await createDepartment("B", "Handles B", 3)
-
-	const departmentC = await createDepartment("C", "Handles C", 4)
-	const departmentD = await createDepartment("D", "Handles D", 4)
-
-	const departmentE = await createDepartment("E", "Handles E", 5)
-
-	// 建立部门关系
-	await createDepartmentRelationship(sales.id, departmentA.id) // root -> A
-	await createDepartmentRelationship(sales.id, departmentB.id) // root -> B
-	await createDepartmentRelationship(departmentA.id, departmentC.id) // A -> C
-	await createDepartmentRelationship(departmentA.id, departmentD.id) // A -> D
-	await createDepartmentRelationship(departmentB.id, departmentC.id) // B -> C
-	await createDepartmentRelationship(departmentB.id, departmentD.id) // B -> D
-	await createDepartmentRelationship(departmentD.id, departmentE.id) // D -> E
-
-	return [sales, departmentA, departmentB, departmentC, departmentD]
-}
 
 describe("departments", () => {
 	beforeAll(async () => {
@@ -48,13 +19,14 @@ describe("departments", () => {
 	})
 
 	it("创建测试数据", async () => {
-		const [sales, departmentA, departmentB, departmentC, departmentD] =
+		const [sales, departmentA, departmentB, departmentC, departmentD, departmentE] =
 			await generateTestDepartments()
 		expect(sales.name).toBe("Sales")
 		expect(departmentA.name).toBe("A")
 		expect(departmentB.name).toBe("B")
 		expect(departmentC.name).toBe("C")
 		expect(departmentD.name).toBe("D")
+		expect(departmentE.name).toBe("E")
 	})
 
 	it("验证部门关系", async () => {
@@ -158,4 +130,8 @@ describe("departments", () => {
 		expect(departmentNamesB).toContain("E")
 		expect(dpsB.length).toBe(1)
 	})
+
+	// it("清理数据", async () => {
+	// 	await resetTables()
+	// })
 })

@@ -8,6 +8,7 @@ import {
 	uuid,
 } from "drizzle-orm/pg-core"
 import { relations } from "drizzle-orm"
+import type { InferInsertModel, InferSelectModel} from "drizzle-orm";
 
 export const todos = pgTable("todos", {
 	id: serial("id").primaryKey(),
@@ -95,3 +96,64 @@ export const employeesRelations = relations(employees, ({ one }) => ({
 		references: [departments.id],
 	}),
 }))
+
+// 请假表单明细
+export const leaveForms = pgTable("leave_forms", {
+	id: uuid("id").defaultRandom().primaryKey(),
+	// 申请人（员工）ID
+	employeeId: uuid("employee_id")
+		.notNull()
+		.references(() => employees.id, { onDelete: "set null" }),
+	startDate: timestamp("start_date").notNull(),
+	endDate: timestamp("end_date").notNull(),
+	reason: text("reason"),
+	// 记录创建时间
+	createdAt: timestamp("created_at").defaultNow(),
+})
+
+// 流程
+export const processStatuses = pgTable("process_statuses", {
+	id: uuid("id").defaultRandom().primaryKey(),
+	formId: uuid("form_id")
+		.notNull()
+		.references(() => leaveForms.id, { onDelete: "cascade" }),
+	status: text("status").$defaultFn(() => 'pending'), // 例如：pending, approved, rejected
+	approverId: uuid("approver_id")
+		.notNull()
+		.references(() => employees.id, { onDelete: "set null" }), // 审批人ID
+	comments: text("comments"), // 审批意见
+	updatedAt: timestamp("updated_at").defaultNow(), // 记录更新时间 审批人
+	createdAt: timestamp("created_at").defaultNow(), // 记录创建时间 发起人
+})
+
+// 定义关系 一个人员可以有多个请假表单
+export const leaveFormsRelations = relations(leaveForms, ({ one }) => ({
+	employee: one(employees, {
+		fields: [leaveForms.employeeId],
+		references: [employees.id],
+	}),
+}))
+
+export type Employees = InferInsertModel<typeof employees>
+export type EmployeesSelect = InferSelectModel<typeof employees>
+
+export type Departments = InferInsertModel<typeof departments>
+export type DepartmentsSelect = InferSelectModel<typeof departments>
+
+export type DepartmentWithEmployees = DepartmentsSelect & {
+	employees: Array<EmployeesSelect>
+}
+export type LeaveForms = InferInsertModel<typeof leaveForms>
+export type LeaveFormsSelect = InferSelectModel<typeof leaveForms>
+
+export type ProcessStatuses = InferInsertModel<typeof processStatuses>
+export type ProcessStatusesSelect = InferSelectModel<
+	typeof processStatuses
+>
+
+export type DepartmentRelationships = InferInsertModel<
+	typeof departmentRelationships
+>
+export type DepartmentRelationshipsSelect = InferSelectModel<
+	typeof departmentRelationships
+>

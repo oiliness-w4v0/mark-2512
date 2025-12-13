@@ -9,15 +9,42 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CanvasRouteRouteImport } from './routes/canvas.route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiEmployeesRouteImport } from './routes/api/employees'
+import { Route as ApiDepartmentsRouteImport } from './routes/api/departments'
+import { Route as ApiDepartmentRelationshipsRouteImport } from './routes/api/department-relationships'
 import { Route as ExampleGuitarsIndexRouteImport } from './routes/example.guitars/index'
 import { Route as ExampleGuitarsGuitarIdRouteImport } from './routes/example.guitars/$guitarId'
+import { Route as ApiEmployeesIdRouteImport } from './routes/api/employees.$id'
+import { Route as ApiDepartmentsIdRouteImport } from './routes/api/departments.$id'
 
+const CanvasRouteRoute = CanvasRouteRouteImport.update({
+  id: '/canvas',
+  path: '/canvas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiEmployeesRoute = ApiEmployeesRouteImport.update({
+  id: '/api/employees',
+  path: '/api/employees',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDepartmentsRoute = ApiDepartmentsRouteImport.update({
+  id: '/api/departments',
+  path: '/api/departments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDepartmentRelationshipsRoute =
+  ApiDepartmentRelationshipsRouteImport.update({
+    id: '/api/department-relationships',
+    path: '/api/department-relationships',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ExampleGuitarsIndexRoute = ExampleGuitarsIndexRouteImport.update({
   id: '/example/guitars/',
   path: '/example/guitars/',
@@ -28,44 +55,132 @@ const ExampleGuitarsGuitarIdRoute = ExampleGuitarsGuitarIdRouteImport.update({
   path: '/example/guitars/$guitarId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiEmployeesIdRoute = ApiEmployeesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiEmployeesRoute,
+} as any)
+const ApiDepartmentsIdRoute = ApiDepartmentsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiDepartmentsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/canvas': typeof CanvasRouteRoute
+  '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
+  '/api/departments': typeof ApiDepartmentsRouteWithChildren
+  '/api/employees': typeof ApiEmployeesRouteWithChildren
+  '/api/departments/$id': typeof ApiDepartmentsIdRoute
+  '/api/employees/$id': typeof ApiEmployeesIdRoute
   '/example/guitars/$guitarId': typeof ExampleGuitarsGuitarIdRoute
   '/example/guitars': typeof ExampleGuitarsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/canvas': typeof CanvasRouteRoute
+  '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
+  '/api/departments': typeof ApiDepartmentsRouteWithChildren
+  '/api/employees': typeof ApiEmployeesRouteWithChildren
+  '/api/departments/$id': typeof ApiDepartmentsIdRoute
+  '/api/employees/$id': typeof ApiEmployeesIdRoute
   '/example/guitars/$guitarId': typeof ExampleGuitarsGuitarIdRoute
   '/example/guitars': typeof ExampleGuitarsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/canvas': typeof CanvasRouteRoute
+  '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
+  '/api/departments': typeof ApiDepartmentsRouteWithChildren
+  '/api/employees': typeof ApiEmployeesRouteWithChildren
+  '/api/departments/$id': typeof ApiDepartmentsIdRoute
+  '/api/employees/$id': typeof ApiEmployeesIdRoute
   '/example/guitars/$guitarId': typeof ExampleGuitarsGuitarIdRoute
   '/example/guitars/': typeof ExampleGuitarsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/example/guitars/$guitarId' | '/example/guitars'
+  fullPaths:
+    | '/'
+    | '/canvas'
+    | '/api/department-relationships'
+    | '/api/departments'
+    | '/api/employees'
+    | '/api/departments/$id'
+    | '/api/employees/$id'
+    | '/example/guitars/$guitarId'
+    | '/example/guitars'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/example/guitars/$guitarId' | '/example/guitars'
-  id: '__root__' | '/' | '/example/guitars/$guitarId' | '/example/guitars/'
+  to:
+    | '/'
+    | '/canvas'
+    | '/api/department-relationships'
+    | '/api/departments'
+    | '/api/employees'
+    | '/api/departments/$id'
+    | '/api/employees/$id'
+    | '/example/guitars/$guitarId'
+    | '/example/guitars'
+  id:
+    | '__root__'
+    | '/'
+    | '/canvas'
+    | '/api/department-relationships'
+    | '/api/departments'
+    | '/api/employees'
+    | '/api/departments/$id'
+    | '/api/employees/$id'
+    | '/example/guitars/$guitarId'
+    | '/example/guitars/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CanvasRouteRoute: typeof CanvasRouteRoute
+  ApiDepartmentRelationshipsRoute: typeof ApiDepartmentRelationshipsRoute
+  ApiDepartmentsRoute: typeof ApiDepartmentsRouteWithChildren
+  ApiEmployeesRoute: typeof ApiEmployeesRouteWithChildren
   ExampleGuitarsGuitarIdRoute: typeof ExampleGuitarsGuitarIdRoute
   ExampleGuitarsIndexRoute: typeof ExampleGuitarsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/canvas': {
+      id: '/canvas'
+      path: '/canvas'
+      fullPath: '/canvas'
+      preLoaderRoute: typeof CanvasRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/employees': {
+      id: '/api/employees'
+      path: '/api/employees'
+      fullPath: '/api/employees'
+      preLoaderRoute: typeof ApiEmployeesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/departments': {
+      id: '/api/departments'
+      path: '/api/departments'
+      fullPath: '/api/departments'
+      preLoaderRoute: typeof ApiDepartmentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/department-relationships': {
+      id: '/api/department-relationships'
+      path: '/api/department-relationships'
+      fullPath: '/api/department-relationships'
+      preLoaderRoute: typeof ApiDepartmentRelationshipsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/example/guitars/': {
@@ -82,11 +197,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExampleGuitarsGuitarIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/employees/$id': {
+      id: '/api/employees/$id'
+      path: '/$id'
+      fullPath: '/api/employees/$id'
+      preLoaderRoute: typeof ApiEmployeesIdRouteImport
+      parentRoute: typeof ApiEmployeesRoute
+    }
+    '/api/departments/$id': {
+      id: '/api/departments/$id'
+      path: '/$id'
+      fullPath: '/api/departments/$id'
+      preLoaderRoute: typeof ApiDepartmentsIdRouteImport
+      parentRoute: typeof ApiDepartmentsRoute
+    }
   }
 }
 
+interface ApiDepartmentsRouteChildren {
+  ApiDepartmentsIdRoute: typeof ApiDepartmentsIdRoute
+}
+
+const ApiDepartmentsRouteChildren: ApiDepartmentsRouteChildren = {
+  ApiDepartmentsIdRoute: ApiDepartmentsIdRoute,
+}
+
+const ApiDepartmentsRouteWithChildren = ApiDepartmentsRoute._addFileChildren(
+  ApiDepartmentsRouteChildren,
+)
+
+interface ApiEmployeesRouteChildren {
+  ApiEmployeesIdRoute: typeof ApiEmployeesIdRoute
+}
+
+const ApiEmployeesRouteChildren: ApiEmployeesRouteChildren = {
+  ApiEmployeesIdRoute: ApiEmployeesIdRoute,
+}
+
+const ApiEmployeesRouteWithChildren = ApiEmployeesRoute._addFileChildren(
+  ApiEmployeesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CanvasRouteRoute: CanvasRouteRoute,
+  ApiDepartmentRelationshipsRoute: ApiDepartmentRelationshipsRoute,
+  ApiDepartmentsRoute: ApiDepartmentsRouteWithChildren,
+  ApiEmployeesRoute: ApiEmployeesRouteWithChildren,
   ExampleGuitarsGuitarIdRoute: ExampleGuitarsGuitarIdRoute,
   ExampleGuitarsIndexRoute: ExampleGuitarsIndexRoute,
 }
