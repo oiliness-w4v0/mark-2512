@@ -164,19 +164,29 @@ function CustomEdge({
 function Dialog() {
 	const visiable = useStore(store, (s) => s.visiable)
 	const userId = useStore(store, (s) => s.userId)
-	if (!visiable) return null
-	if (!userId) return null
 
 	return (
-		<div className="fixed w-full h-full top-0 left-0 flex justify-center items-center z-10">
+		<div
+			className={`fixed w-full h-full top-0 left-0 flex justify-center items-center z-10 transition-opacity duration-150 ${
+				visiable ? "opacity-100" : "opacity-0 pointer-events-none"
+			}`}
+		>
 			<div
-				className="absolute w-full h-full top-0 left-0 bg-black/80"
+				className={`absolute w-full h-full top-0 left-0 bg-black/80 transition-opacity duration-150 ${
+					visiable ? "opacity-80" : "opacity-0"
+				}`}
 				onClick={() => closeDepartmentDialog()}
 			></div>
-			<div className="w-full max-w-2xl h-3/5 bg-white rounded-lg p-4 relative z-5 overflow-auto">
-				<Suspense fallback={<DialogFallback />}>
-					<DialogContent userId={userId} />
-				</Suspense>
+			<div
+				className={`w-full max-w-2xl h-3/5 bg-white rounded-lg p-4 relative z-5 overflow-auto transition-all duration-150 transform ${
+					visiable ? "scale-100 opacity-100" : "scale-95 opacity-0"
+				}`}
+			>
+				{userId && (
+					<Suspense fallback={<DialogFallback />}>
+						<DialogContent userId={userId} />
+					</Suspense>
+				)}
 			</div>
 		</div>
 	)
@@ -184,8 +194,8 @@ function Dialog() {
 
 function DialogFallback() {
 	return (
-		<div className="flex h-full w-full items-center justify-center text-gray-500">
-			加载中...
+		<div className="flex h-full w-full items-center justify-center">
+			<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
 		</div>
 	)
 }
