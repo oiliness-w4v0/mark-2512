@@ -4,12 +4,12 @@ import type { Employees } from '@/db/schema'
 
 export const DEPLOY_URL = 'http://localhost:3000'
 
-export const employeesQueryOptions = () => 
+export const employeesQueryOptions = (id: string) => 
      queryOptions({
-        queryKey: ['employees'],
+        queryKey: ['employees', id],
         queryFn: () =>
             axios
-                .get<Array<Employees>>(`${DEPLOY_URL}/api/employees`)
+                .get<Employees>(`${DEPLOY_URL}/api/employees/` + id)
                 .then((res) => res.data)
                 .catch((err) => {
                     console.error('Error fetching employees:', err)

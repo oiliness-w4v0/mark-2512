@@ -16,6 +16,9 @@ import { ArchitectureDiagram } from "@/components/ArchitectureDiagram"
 export const Route = createFileRoute("/canvas")({
 	loader: async ({ context }) => {
 		await context.queryClient.ensureQueryData(departmentsQueryOptions())
+		await context.queryClient.ensureQueryData(
+			departmentRelationshipsQueryOptions(),
+		)
 	},
 	component: RouteComponent,
 })

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react"
+import { Suspense, useCallback, useEffect, useState } from "react"
+import { Store, useStore } from "@tanstack/react-store"
 
 import {
 	Background,
@@ -13,17 +14,32 @@ import {
 	useNodesState,
 	useReactFlow,
 } from "@xyflow/react"
+import { useSuspenseQuery } from "@tanstack/react-query"
 import type { Edge, Node, OnConnect } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
 
 import type { DepartmentWithEmployees } from "@/db/schema"
-
+import { employeesQueryOptions } from "@/utils/employees"
 
 const nodeTypes = {
 	department: DepartmentNode,
 }
+
 const edgeTypes = {
 	"custom-edge": CustomEdge,
+}
+
+export const store = new Store({
+	visiable: false,
+	userId: "" as string | null,
+})
+
+export function openDepartmentDialog(userId: string) {
+	store.setState({ visiable: true, userId })
+}
+
+export function closeDepartmentDialog() {
+	store.setState({ visiable: false, userId: null })
 }
 
 export function ArchitectureDiagram({ initNodes, initEdges }: { initNodes: Array<Node>, initEdges: Array<Edge> }) {
@@ -39,7 +55,8 @@ export function ArchitectureDiagram({ initNodes, initEdges }: { initNodes: Array
 	)
 
 	return (
-		<div style={{ width: "100vw", height: "100vh" }}>
+		<div style={{ width: "100vw", height: "100vh" }} className="relative">
+			<Dialog />
 			<ClientOnly>
 				<ReactFlow
 					nodes={nodes}
@@ -85,8 +102,9 @@ function DepartmentNode({
 					<li
 						key={emp.id}
 						className="px-2 py-1 hover:bg-gray-200 flex items-center"
+						onClick={() => openDepartmentDialog(emp.id)}
 					>
-						<input // checkbox for employee selection
+						<input
 							type="checkbox"
 							className="mr-2"
 							disabled
@@ -100,7 +118,7 @@ function DepartmentNode({
 	)
 }
 
-export function CustomEdge({
+function CustomEdge({
 	id,
 	sourceX,
 	sourceY,
@@ -140,5 +158,64 @@ export function CustomEdge({
 				</button>
 			</EdgeLabelRenderer>
 		</>
+	)
+}
+
+function Dialog() {
+	const visiable = useStore(store, (s) => s.visiable)
+	const userId = useStore(store, (s) => s.userId)
+	if (!visiable) return null
+	if (!userId) return null
+
+	return (
+		<div className="fixed w-full h-full top-0 left-0 flex justify-center items-center z-10">
+			<div
+				className="absolute w-full h-full top-0 left-0 bg-black/80"
+				onClick={() => closeDepartmentDialog()}
+			></div>
+			<div className="w-full max-w-2xl h-3/5 bg-white rounded-lg p-4 relative z-5 overflow-auto">
+				<Suspense fallback={<DialogFallback />}>
+					<DialogContent userId={userId} />
+				</Suspense>
+			</div>
+		</div>
+	)
+}
+
+function DialogFallback() {
+	return (
+		<div className="flex h-full w-full items-center justify-center text-gray-500">
+			加载中...
+		</div>
+	)
+}
+
+function DialogContent({ userId }: { userId: string }) {
+	const { data, error } = useSuspenseQuery(employeesQueryOptions(userId))
+
+	return (
+		<div>
+			<h1 className="text-xl font-semibold mb-2">{userId}</h1>
+			{error && <div className="text-red-500">Error: {error.message}</div>}
+			
+				<div>
+					<h2 className="text-2xl font-bold mb-4">员工详情</h2>
+					<p>
+						<strong>姓名:</strong> {data.name}
+					</p>
+					<p>
+						<strong>职位:</strong> {data.position}
+					</p>
+					<p>
+						<strong>邮箱:</strong> {data.email}
+					</p>
+				</div>
+			<button
+				className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+				onClick={() => closeDepartmentDialog()}
+			>
+				关闭
+			</button>
+		</div>
 	)
 }
