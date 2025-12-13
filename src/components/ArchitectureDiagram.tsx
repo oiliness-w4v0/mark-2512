@@ -43,7 +43,7 @@ export function closeDepartmentDialog() {
 }
 
 export function ArchitectureDiagram({ initNodes, initEdges }: { initNodes: Array<Node>, initEdges: Array<Edge> }) {
-	const [nodes, setNodes, onNodesChange] = useNodesState<Node>(initNodes)
+	const [nodes, _, onNodesChange] = useNodesState<Node>(initNodes)
 	const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initEdges)
 
 	const onConnect: OnConnect = useCallback(
