@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LeaveApprovalcopyRouteImport } from './routes/leave-approval copy'
 import { Route as LeaveApprovalRouteImport } from './routes/leave-approval'
 import { Route as CanvasRouteRouteImport } from './routes/canvas.route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -18,6 +19,11 @@ import { Route as ApiDepartmentRelationshipsRouteImport } from './routes/api/dep
 import { Route as ApiEmployeesIdRouteImport } from './routes/api/employees.$id'
 import { Route as ApiDepartmentsIdRouteImport } from './routes/api/departments.$id'
 
+const LeaveApprovalcopyRoute = LeaveApprovalcopyRouteImport.update({
+  id: '/leave-approval copy',
+  path: '/leave-approval copy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeaveApprovalRoute = LeaveApprovalRouteImport.update({
   id: '/leave-approval',
   path: '/leave-approval',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/canvas': typeof CanvasRouteRoute
   '/leave-approval': typeof LeaveApprovalRoute
+  '/leave-approval copy': typeof LeaveApprovalcopyRoute
   '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
   '/api/departments': typeof ApiDepartmentsRouteWithChildren
   '/api/employees': typeof ApiEmployeesRouteWithChildren
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/canvas': typeof CanvasRouteRoute
   '/leave-approval': typeof LeaveApprovalRoute
+  '/leave-approval copy': typeof LeaveApprovalcopyRoute
   '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
   '/api/departments': typeof ApiDepartmentsRouteWithChildren
   '/api/employees': typeof ApiEmployeesRouteWithChildren
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/canvas': typeof CanvasRouteRoute
   '/leave-approval': typeof LeaveApprovalRoute
+  '/leave-approval copy': typeof LeaveApprovalcopyRoute
   '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
   '/api/departments': typeof ApiDepartmentsRouteWithChildren
   '/api/employees': typeof ApiEmployeesRouteWithChildren
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/canvas'
     | '/leave-approval'
+    | '/leave-approval copy'
     | '/api/department-relationships'
     | '/api/departments'
     | '/api/employees'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/'
     | '/canvas'
     | '/leave-approval'
+    | '/leave-approval copy'
     | '/api/department-relationships'
     | '/api/departments'
     | '/api/employees'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/'
     | '/canvas'
     | '/leave-approval'
+    | '/leave-approval copy'
     | '/api/department-relationships'
     | '/api/departments'
     | '/api/employees'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CanvasRouteRoute: typeof CanvasRouteRoute
   LeaveApprovalRoute: typeof LeaveApprovalRoute
+  LeaveApprovalcopyRoute: typeof LeaveApprovalcopyRoute
   ApiDepartmentRelationshipsRoute: typeof ApiDepartmentRelationshipsRoute
   ApiDepartmentsRoute: typeof ApiDepartmentsRouteWithChildren
   ApiEmployeesRoute: typeof ApiEmployeesRouteWithChildren
@@ -135,6 +148,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/leave-approval copy': {
+      id: '/leave-approval copy'
+      path: '/leave-approval copy'
+      fullPath: '/leave-approval copy'
+      preLoaderRoute: typeof LeaveApprovalcopyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leave-approval': {
       id: '/leave-approval'
       path: '/leave-approval'
@@ -222,6 +242,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CanvasRouteRoute: CanvasRouteRoute,
   LeaveApprovalRoute: LeaveApprovalRoute,
+  LeaveApprovalcopyRoute: LeaveApprovalcopyRoute,
   ApiDepartmentRelationshipsRoute: ApiDepartmentRelationshipsRoute,
   ApiDepartmentsRoute: ApiDepartmentsRouteWithChildren,
   ApiEmployeesRoute: ApiEmployeesRouteWithChildren,
