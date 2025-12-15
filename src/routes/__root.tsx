@@ -11,6 +11,7 @@ import AiDevtools from "../lib/ai-devtools"
 import StoreDevtools from "../lib/demo-store-devtools"
 
 import appCss from "../styles.css?url"
+import Index from "@/components/Index"
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -59,6 +60,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<QueryClientProvider client={queryClient}>
+            		<Index />
 					{children}
 					<TanStackDevtools
 						config={{

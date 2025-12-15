@@ -3,7 +3,7 @@ import { useState } from "react"
 import FormIndex from "@/components/BugReportHistory"
 import { TypographyH4 } from "@/components/ui/h4"
 import { departments, forms } from "@/data/form-index-data"
-
+import Index from "@/components/Index"
 
 import {
   Select,
@@ -30,7 +30,7 @@ function RouteComponent() {
         <div className="flex gap-4 w-5xl mx-auto py-10 flex-col pt-40">
             <SelectDemo selectedDepartment={selectedDepartment} setSelectedDepartment={setSelectedDepartment} />
 			<div className="flex justify-start">
-				<TypographyH4>公司表单索引</TypographyH4>
+				<TypographyH4>表单索引</TypographyH4>
 			</div>
 			<FormIndex forms={filteredForms} />
 		</div>
