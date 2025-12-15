@@ -67,7 +67,7 @@ const DayCalendar: React.FC<DayCalendarProps> = ({ today: propToday }) => {
 
             <CalendarGrid
                 year={currentYear}
-                leaveData={LEAVE_DB[currentYear] || {}}
+                leaveData={LEAVE_DB[currentYear]}
                 today={safeToday}
                 onDayHover={handleDayHover}
             />

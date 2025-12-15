@@ -1,4 +1,4 @@
-import { YearLeaveDB } from "./types"
+import type { YearLeaveDB } from "./types"
 
 // Use a function to get today to avoid module-level side effects if possible,
 // but for constants it's often acceptable.

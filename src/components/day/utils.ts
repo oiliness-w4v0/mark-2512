@@ -1,4 +1,4 @@
-import { DayInfo } from "./types"
+import type { DayInfo } from "./types"
 
 export const generateMonthDays = (
 	year: number,
