@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UserRouteImport } from './routes/user'
 import { Route as LeaveApprovalcopyRouteImport } from './routes/leave-approval copy'
 import { Route as LeaveApprovalRouteImport } from './routes/leave-approval'
 import { Route as DayRouteImport } from './routes/day'
@@ -20,6 +21,11 @@ import { Route as ApiDepartmentRelationshipsRouteImport } from './routes/api/dep
 import { Route as ApiEmployeesIdRouteImport } from './routes/api/employees.$id'
 import { Route as ApiDepartmentsIdRouteImport } from './routes/api/departments.$id'
 
+const UserRoute = UserRouteImport.update({
+  id: '/user',
+  path: '/user',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeaveApprovalcopyRoute = LeaveApprovalcopyRouteImport.update({
   id: '/leave-approval copy',
   path: '/leave-approval copy',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/day': typeof DayRoute
   '/leave-approval': typeof LeaveApprovalRoute
   '/leave-approval copy': typeof LeaveApprovalcopyRoute
+  '/user': typeof UserRoute
   '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
   '/api/departments': typeof ApiDepartmentsRouteWithChildren
   '/api/employees': typeof ApiEmployeesRouteWithChildren
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/day': typeof DayRoute
   '/leave-approval': typeof LeaveApprovalRoute
   '/leave-approval copy': typeof LeaveApprovalcopyRoute
+  '/user': typeof UserRoute
   '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
   '/api/departments': typeof ApiDepartmentsRouteWithChildren
   '/api/employees': typeof ApiEmployeesRouteWithChildren
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/day': typeof DayRoute
   '/leave-approval': typeof LeaveApprovalRoute
   '/leave-approval copy': typeof LeaveApprovalcopyRoute
+  '/user': typeof UserRoute
   '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
   '/api/departments': typeof ApiDepartmentsRouteWithChildren
   '/api/employees': typeof ApiEmployeesRouteWithChildren
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/day'
     | '/leave-approval'
     | '/leave-approval copy'
+    | '/user'
     | '/api/department-relationships'
     | '/api/departments'
     | '/api/employees'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/day'
     | '/leave-approval'
     | '/leave-approval copy'
+    | '/user'
     | '/api/department-relationships'
     | '/api/departments'
     | '/api/employees'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/day'
     | '/leave-approval'
     | '/leave-approval copy'
+    | '/user'
     | '/api/department-relationships'
     | '/api/departments'
     | '/api/employees'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   DayRoute: typeof DayRoute
   LeaveApprovalRoute: typeof LeaveApprovalRoute
   LeaveApprovalcopyRoute: typeof LeaveApprovalcopyRoute
+  UserRoute: typeof UserRoute
   ApiDepartmentRelationshipsRoute: typeof ApiDepartmentRelationshipsRoute
   ApiDepartmentsRoute: typeof ApiDepartmentsRouteWithChildren
   ApiEmployeesRoute: typeof ApiEmployeesRouteWithChildren
@@ -161,6 +174,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/user': {
+      id: '/user'
+      path: '/user'
+      fullPath: '/user'
+      preLoaderRoute: typeof UserRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leave-approval copy': {
       id: '/leave-approval copy'
       path: '/leave-approval copy'
@@ -264,6 +284,7 @@ const rootRouteChildren: RootRouteChildren = {
   DayRoute: DayRoute,
   LeaveApprovalRoute: LeaveApprovalRoute,
   LeaveApprovalcopyRoute: LeaveApprovalcopyRoute,
+  UserRoute: UserRoute,
   ApiDepartmentRelationshipsRoute: ApiDepartmentRelationshipsRoute,
   ApiDepartmentsRoute: ApiDepartmentsRouteWithChildren,
   ApiEmployeesRoute: ApiEmployeesRouteWithChildren,
