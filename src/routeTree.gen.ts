@@ -9,14 +9,35 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LeaveApprovalcopyRouteImport } from './routes/leave-approval copy'
+import { Route as LeaveApprovalRouteImport } from './routes/leave-approval'
 import { Route as DayRouteImport } from './routes/day'
+import { Route as CanvasRouteRouteImport } from './routes/canvas.route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ExampleGuitarsIndexRouteImport } from './routes/example.guitars/index'
-import { Route as ExampleGuitarsGuitarIdRouteImport } from './routes/example.guitars/$guitarId'
+import { Route as ApiEmployeesRouteImport } from './routes/api/employees'
+import { Route as ApiDepartmentsRouteImport } from './routes/api/departments'
+import { Route as ApiDepartmentRelationshipsRouteImport } from './routes/api/department-relationships'
+import { Route as ApiEmployeesIdRouteImport } from './routes/api/employees.$id'
+import { Route as ApiDepartmentsIdRouteImport } from './routes/api/departments.$id'
 
+const LeaveApprovalcopyRoute = LeaveApprovalcopyRouteImport.update({
+  id: '/leave-approval copy',
+  path: '/leave-approval copy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaveApprovalRoute = LeaveApprovalRouteImport.update({
+  id: '/leave-approval',
+  path: '/leave-approval',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DayRoute = DayRouteImport.update({
   id: '/day',
   path: '/day',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CanvasRouteRoute = CanvasRouteRouteImport.update({
+  id: '/canvas',
+  path: '/canvas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -24,63 +45,148 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExampleGuitarsIndexRoute = ExampleGuitarsIndexRouteImport.update({
-  id: '/example/guitars/',
-  path: '/example/guitars/',
+const ApiEmployeesRoute = ApiEmployeesRouteImport.update({
+  id: '/api/employees',
+  path: '/api/employees',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExampleGuitarsGuitarIdRoute = ExampleGuitarsGuitarIdRouteImport.update({
-  id: '/example/guitars/$guitarId',
-  path: '/example/guitars/$guitarId',
+const ApiDepartmentsRoute = ApiDepartmentsRouteImport.update({
+  id: '/api/departments',
+  path: '/api/departments',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDepartmentRelationshipsRoute =
+  ApiDepartmentRelationshipsRouteImport.update({
+    id: '/api/department-relationships',
+    path: '/api/department-relationships',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiEmployeesIdRoute = ApiEmployeesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiEmployeesRoute,
+} as any)
+const ApiDepartmentsIdRoute = ApiDepartmentsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiDepartmentsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/canvas': typeof CanvasRouteRoute
   '/day': typeof DayRoute
-  '/example/guitars/$guitarId': typeof ExampleGuitarsGuitarIdRoute
-  '/example/guitars': typeof ExampleGuitarsIndexRoute
+  '/leave-approval': typeof LeaveApprovalRoute
+  '/leave-approval copy': typeof LeaveApprovalcopyRoute
+  '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
+  '/api/departments': typeof ApiDepartmentsRouteWithChildren
+  '/api/employees': typeof ApiEmployeesRouteWithChildren
+  '/api/departments/$id': typeof ApiDepartmentsIdRoute
+  '/api/employees/$id': typeof ApiEmployeesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/canvas': typeof CanvasRouteRoute
   '/day': typeof DayRoute
-  '/example/guitars/$guitarId': typeof ExampleGuitarsGuitarIdRoute
-  '/example/guitars': typeof ExampleGuitarsIndexRoute
+  '/leave-approval': typeof LeaveApprovalRoute
+  '/leave-approval copy': typeof LeaveApprovalcopyRoute
+  '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
+  '/api/departments': typeof ApiDepartmentsRouteWithChildren
+  '/api/employees': typeof ApiEmployeesRouteWithChildren
+  '/api/departments/$id': typeof ApiDepartmentsIdRoute
+  '/api/employees/$id': typeof ApiEmployeesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/canvas': typeof CanvasRouteRoute
   '/day': typeof DayRoute
-  '/example/guitars/$guitarId': typeof ExampleGuitarsGuitarIdRoute
-  '/example/guitars/': typeof ExampleGuitarsIndexRoute
+  '/leave-approval': typeof LeaveApprovalRoute
+  '/leave-approval copy': typeof LeaveApprovalcopyRoute
+  '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
+  '/api/departments': typeof ApiDepartmentsRouteWithChildren
+  '/api/employees': typeof ApiEmployeesRouteWithChildren
+  '/api/departments/$id': typeof ApiDepartmentsIdRoute
+  '/api/employees/$id': typeof ApiEmployeesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/day' | '/example/guitars/$guitarId' | '/example/guitars'
+  fullPaths:
+    | '/'
+    | '/canvas'
+    | '/day'
+    | '/leave-approval'
+    | '/leave-approval copy'
+    | '/api/department-relationships'
+    | '/api/departments'
+    | '/api/employees'
+    | '/api/departments/$id'
+    | '/api/employees/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/day' | '/example/guitars/$guitarId' | '/example/guitars'
+  to:
+    | '/'
+    | '/canvas'
+    | '/day'
+    | '/leave-approval'
+    | '/leave-approval copy'
+    | '/api/department-relationships'
+    | '/api/departments'
+    | '/api/employees'
+    | '/api/departments/$id'
+    | '/api/employees/$id'
   id:
     | '__root__'
     | '/'
+    | '/canvas'
     | '/day'
-    | '/example/guitars/$guitarId'
-    | '/example/guitars/'
+    | '/leave-approval'
+    | '/leave-approval copy'
+    | '/api/department-relationships'
+    | '/api/departments'
+    | '/api/employees'
+    | '/api/departments/$id'
+    | '/api/employees/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CanvasRouteRoute: typeof CanvasRouteRoute
   DayRoute: typeof DayRoute
-  ExampleGuitarsGuitarIdRoute: typeof ExampleGuitarsGuitarIdRoute
-  ExampleGuitarsIndexRoute: typeof ExampleGuitarsIndexRoute
+  LeaveApprovalRoute: typeof LeaveApprovalRoute
+  LeaveApprovalcopyRoute: typeof LeaveApprovalcopyRoute
+  ApiDepartmentRelationshipsRoute: typeof ApiDepartmentRelationshipsRoute
+  ApiDepartmentsRoute: typeof ApiDepartmentsRouteWithChildren
+  ApiEmployeesRoute: typeof ApiEmployeesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/leave-approval copy': {
+      id: '/leave-approval copy'
+      path: '/leave-approval copy'
+      fullPath: '/leave-approval copy'
+      preLoaderRoute: typeof LeaveApprovalcopyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leave-approval': {
+      id: '/leave-approval'
+      path: '/leave-approval'
+      fullPath: '/leave-approval'
+      preLoaderRoute: typeof LeaveApprovalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/day': {
       id: '/day'
       path: '/day'
       fullPath: '/day'
       preLoaderRoute: typeof DayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/canvas': {
+      id: '/canvas'
+      path: '/canvas'
+      fullPath: '/canvas'
+      preLoaderRoute: typeof CanvasRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -90,28 +196,77 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/example/guitars/': {
-      id: '/example/guitars/'
-      path: '/example/guitars'
-      fullPath: '/example/guitars'
-      preLoaderRoute: typeof ExampleGuitarsIndexRouteImport
+    '/api/employees': {
+      id: '/api/employees'
+      path: '/api/employees'
+      fullPath: '/api/employees'
+      preLoaderRoute: typeof ApiEmployeesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/example/guitars/$guitarId': {
-      id: '/example/guitars/$guitarId'
-      path: '/example/guitars/$guitarId'
-      fullPath: '/example/guitars/$guitarId'
-      preLoaderRoute: typeof ExampleGuitarsGuitarIdRouteImport
+    '/api/departments': {
+      id: '/api/departments'
+      path: '/api/departments'
+      fullPath: '/api/departments'
+      preLoaderRoute: typeof ApiDepartmentsRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/department-relationships': {
+      id: '/api/department-relationships'
+      path: '/api/department-relationships'
+      fullPath: '/api/department-relationships'
+      preLoaderRoute: typeof ApiDepartmentRelationshipsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/employees/$id': {
+      id: '/api/employees/$id'
+      path: '/$id'
+      fullPath: '/api/employees/$id'
+      preLoaderRoute: typeof ApiEmployeesIdRouteImport
+      parentRoute: typeof ApiEmployeesRoute
+    }
+    '/api/departments/$id': {
+      id: '/api/departments/$id'
+      path: '/$id'
+      fullPath: '/api/departments/$id'
+      preLoaderRoute: typeof ApiDepartmentsIdRouteImport
+      parentRoute: typeof ApiDepartmentsRoute
     }
   }
 }
 
+interface ApiDepartmentsRouteChildren {
+  ApiDepartmentsIdRoute: typeof ApiDepartmentsIdRoute
+}
+
+const ApiDepartmentsRouteChildren: ApiDepartmentsRouteChildren = {
+  ApiDepartmentsIdRoute: ApiDepartmentsIdRoute,
+}
+
+const ApiDepartmentsRouteWithChildren = ApiDepartmentsRoute._addFileChildren(
+  ApiDepartmentsRouteChildren,
+)
+
+interface ApiEmployeesRouteChildren {
+  ApiEmployeesIdRoute: typeof ApiEmployeesIdRoute
+}
+
+const ApiEmployeesRouteChildren: ApiEmployeesRouteChildren = {
+  ApiEmployeesIdRoute: ApiEmployeesIdRoute,
+}
+
+const ApiEmployeesRouteWithChildren = ApiEmployeesRoute._addFileChildren(
+  ApiEmployeesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CanvasRouteRoute: CanvasRouteRoute,
   DayRoute: DayRoute,
-  ExampleGuitarsGuitarIdRoute: ExampleGuitarsGuitarIdRoute,
-  ExampleGuitarsIndexRoute: ExampleGuitarsIndexRoute,
+  LeaveApprovalRoute: LeaveApprovalRoute,
+  LeaveApprovalcopyRoute: LeaveApprovalcopyRoute,
+  ApiDepartmentRelationshipsRoute: ApiDepartmentRelationshipsRoute,
+  ApiDepartmentsRoute: ApiDepartmentsRouteWithChildren,
+  ApiEmployeesRoute: ApiEmployeesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

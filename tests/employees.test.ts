@@ -1,23 +1,8 @@
 import { beforeAll, describe, expect, it } from "vitest"
-import { generateRootDepartment } from "./departments.test"
-import type { Employee } from "@/db/employees.server"
-import { db } from "@/db"
+import { generateRootDepartment, generateTestEmployee } from "./utils"
 import { createDepartment, createDepartmentRelationship, getActiveDepartments } from "@/db/department.server"
-import { createEmployee, getAllEmployees } from "@/db/employees.server"
+import { getAllEmployees } from "@/db/employees.server"
 import { resetTables } from "@/db/common.server"
-
-// eg: 创建测试员工数据
-export async function generateTestEmployee(departmentId: string, name: string) {
-	const employee: Employee = {
-		name: "Employee " + name,
-		identityCard: "ID" + Math.random().toString().slice(2, 10),
-		email: name.replace(/\s+/g, "").toLowerCase() + "@163.com",
-		phone: "123-456-7890",
-		position: "Sales Manager",
-		departmentId, // 替换为实际部门 UUID
-	}
-	return await createEmployee(employee)
-}
 
 describe("employees", () => {
 	// 这里可以添加员工相关的测试用例
@@ -73,4 +58,8 @@ describe("employees", () => {
 		expect(allDepartments.length).toBeGreaterThanOrEqual(1) // 只包括 Sales 和部门里面的俩名员工
 		expect(allDepartments[0].employees.length).toBeGreaterThanOrEqual(2)
 	})
+
+	// it("清理数据", async () => {
+	// 	await resetTables()
+	// })
 })
