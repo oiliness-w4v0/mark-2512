@@ -9,8 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UserRouteImport } from './routes/user'
 import { Route as LeaveApprovalcopyRouteImport } from './routes/leave-approval copy'
 import { Route as LeaveApprovalRouteImport } from './routes/leave-approval'
+import { Route as DayRouteImport } from './routes/day'
 import { Route as CanvasRouteRouteImport } from './routes/canvas.route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiEmployeesRouteImport } from './routes/api/employees'
@@ -19,6 +21,11 @@ import { Route as ApiDepartmentRelationshipsRouteImport } from './routes/api/dep
 import { Route as ApiEmployeesIdRouteImport } from './routes/api/employees.$id'
 import { Route as ApiDepartmentsIdRouteImport } from './routes/api/departments.$id'
 
+const UserRoute = UserRouteImport.update({
+  id: '/user',
+  path: '/user',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LeaveApprovalcopyRoute = LeaveApprovalcopyRouteImport.update({
   id: '/leave-approval copy',
   path: '/leave-approval copy',
@@ -27,6 +34,11 @@ const LeaveApprovalcopyRoute = LeaveApprovalcopyRouteImport.update({
 const LeaveApprovalRoute = LeaveApprovalRouteImport.update({
   id: '/leave-approval',
   path: '/leave-approval',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DayRoute = DayRouteImport.update({
+  id: '/day',
+  path: '/day',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CanvasRouteRoute = CanvasRouteRouteImport.update({
@@ -69,8 +81,10 @@ const ApiDepartmentsIdRoute = ApiDepartmentsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/canvas': typeof CanvasRouteRoute
+  '/day': typeof DayRoute
   '/leave-approval': typeof LeaveApprovalRoute
   '/leave-approval copy': typeof LeaveApprovalcopyRoute
+  '/user': typeof UserRoute
   '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
   '/api/departments': typeof ApiDepartmentsRouteWithChildren
   '/api/employees': typeof ApiEmployeesRouteWithChildren
@@ -80,8 +94,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/canvas': typeof CanvasRouteRoute
+  '/day': typeof DayRoute
   '/leave-approval': typeof LeaveApprovalRoute
   '/leave-approval copy': typeof LeaveApprovalcopyRoute
+  '/user': typeof UserRoute
   '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
   '/api/departments': typeof ApiDepartmentsRouteWithChildren
   '/api/employees': typeof ApiEmployeesRouteWithChildren
@@ -92,8 +108,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/canvas': typeof CanvasRouteRoute
+  '/day': typeof DayRoute
   '/leave-approval': typeof LeaveApprovalRoute
   '/leave-approval copy': typeof LeaveApprovalcopyRoute
+  '/user': typeof UserRoute
   '/api/department-relationships': typeof ApiDepartmentRelationshipsRoute
   '/api/departments': typeof ApiDepartmentsRouteWithChildren
   '/api/employees': typeof ApiEmployeesRouteWithChildren
@@ -105,8 +123,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/canvas'
+    | '/day'
     | '/leave-approval'
     | '/leave-approval copy'
+    | '/user'
     | '/api/department-relationships'
     | '/api/departments'
     | '/api/employees'
@@ -116,8 +136,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/canvas'
+    | '/day'
     | '/leave-approval'
     | '/leave-approval copy'
+    | '/user'
     | '/api/department-relationships'
     | '/api/departments'
     | '/api/employees'
@@ -127,8 +149,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/canvas'
+    | '/day'
     | '/leave-approval'
     | '/leave-approval copy'
+    | '/user'
     | '/api/department-relationships'
     | '/api/departments'
     | '/api/employees'
@@ -139,8 +163,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CanvasRouteRoute: typeof CanvasRouteRoute
+  DayRoute: typeof DayRoute
   LeaveApprovalRoute: typeof LeaveApprovalRoute
   LeaveApprovalcopyRoute: typeof LeaveApprovalcopyRoute
+  UserRoute: typeof UserRoute
   ApiDepartmentRelationshipsRoute: typeof ApiDepartmentRelationshipsRoute
   ApiDepartmentsRoute: typeof ApiDepartmentsRouteWithChildren
   ApiEmployeesRoute: typeof ApiEmployeesRouteWithChildren
@@ -148,6 +174,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/user': {
+      id: '/user'
+      path: '/user'
+      fullPath: '/user'
+      preLoaderRoute: typeof UserRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/leave-approval copy': {
       id: '/leave-approval copy'
       path: '/leave-approval copy'
@@ -160,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/leave-approval'
       fullPath: '/leave-approval'
       preLoaderRoute: typeof LeaveApprovalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/day': {
+      id: '/day'
+      path: '/day'
+      fullPath: '/day'
+      preLoaderRoute: typeof DayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/canvas': {
@@ -241,8 +281,10 @@ const ApiEmployeesRouteWithChildren = ApiEmployeesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CanvasRouteRoute: CanvasRouteRoute,
+  DayRoute: DayRoute,
   LeaveApprovalRoute: LeaveApprovalRoute,
   LeaveApprovalcopyRoute: LeaveApprovalcopyRoute,
+  UserRoute: UserRoute,
   ApiDepartmentRelationshipsRoute: ApiDepartmentRelationshipsRoute,
   ApiDepartmentsRoute: ApiDepartmentsRouteWithChildren,
   ApiEmployeesRoute: ApiEmployeesRouteWithChildren,
